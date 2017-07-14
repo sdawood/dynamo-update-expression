@@ -51,7 +51,7 @@ See the options available below:
   // Conditional updates (Optimitic Version Locking)
 
   // To conditionally update if the new value is greater than the value in DynamoDB
-    const versionedUpdateExpression = due.getVersionedUpdateExpression({original, modified, useCurrent: false, condition = '<'});
+  const versionedUpdateExpression = due.getVersionedUpdateExpression({original, modified, useCurrent: false, condition = '<'});
 
   // Use Case 3: TRY-LOCK behaviour
 
@@ -147,7 +147,7 @@ See the options available below:
 
 The returned "UpdateExpression" object would be:
 
-```js
+```
 {
     "UpdateExpression":
     "SET #color[2] = :color2, #productReview.#fiveStar[2] = :productReviewFiveStar2,
@@ -483,7 +483,7 @@ const updateExpression = due.getVersionedUpdateExpression({
 ```
 
 Client would ideally `wait` and try again to lock the range if update failed.
-Behavior is inspired by (this post)[http://vilkeliskis.com/articles/distributed-locks-with-dynamodb] and yields same behavior.
+Behavior is inspired by [this post](http://vilkeliskis.com/articles/distributed-locks-with-dynamodb) and yields same behavior.
 
 ##### Advanced Examples
 
