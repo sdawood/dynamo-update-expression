@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/sdawood/dynamo-update-expression.png?branch=master)](https://travis-ci.org/sdawood/dynamo-update-expression)
 
 # dynamo-update-expression
-=============
+
 
 Generate DynamoDB Update Expression by diff-ing original and updated documents.
 
@@ -143,7 +143,6 @@ See the options available below:
   ```
 
 
-=============
 
 The returned "UpdateExpression" object would be:
 
@@ -181,6 +180,25 @@ The returned "UpdateExpression" object would be:
     }
 }
 ```
+
+## How to REMOVE item at \[index\] from a list
+For best results, never pop or splice a list to remove an item; doing so would collapse the list and shift the indexes down by the number of removed items, effectively changing the item identifier.
+If the list indexes can't be trusted to generate the SET/ADD/REMOVE expressions, the only possible solution would be to include a version of the original list
+minus the removed values, - usually by comparing values, since the indexes would be meaningless - then SET the #list to the new :list. Something that would not be ideal in the case of lists with a large number of items.
+
+`dynamo-update-expression` assumes that you know better not to splice your lists, it detects nullified items (set to null or undefined) and strings set to empty string ""
+
+**Note: DynamoDB doesn't allow a value to be an empty string and would remove an attribute if you set the value to ""**
+
+The benefits of nullifying/emptying List items are double fold. Firstly, we are able to generate a precise update expression that only REMOVE the targeted items. Thus avoiding the sub-optimal solution of including a merged list of (all - removed) or worse risk overwriting the whole list in case of an unstable merge/diff of the lists.
+In addition, it is almost always a good idea to preserve the structure of the document, by keeping empty collections (List/Map) in this case contrary to deleting the empty collection, as some other solutions would do if the list is empty.
+Deleting the collection would force your code to do null-checking in future reads instead of the functional-style iteration over collections with the safety of no-op in case they turn out to be empty.
+
+I'd even go further and suggest that you nullify values - not delete keys - for Map child nodes/leaves, if you would like to preserve the document structure and avoid null-checking in subsequent reads as discussed.
+
+As a rule of thumb, for Lists, always nullify (set to `null` or `undefined`) or empty the strings (set to ""), the update expression would detect and precisely (generate expression to) remove those elements by index. DynamoDB eventually collapses your list on the server side after removing the selected indexes.
+For Maps (object keys), you are free to delete the key or to nullify/empty the values. Choose the earlier for schema-like document structure and the latter for free style document store.
+
 
 ## API
 #### getUpdateExpression({original, modified, orphans = false})
