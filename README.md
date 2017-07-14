@@ -5,7 +5,7 @@
 
 Generate DynamoDB Update Expression by diff-ing original and updated documents.
 
-Allows for generating update expression with no-orphan (create new nodes as you go) or deep paths with no-orphans (ideal for *predefined* document structure)
+Allows for generating update expression with no-orphan (create new nodes as you go) or deep paths (ideal for *predefined* document structure), more on that in the examples below.
 
 Optionally include a condition expression with you update to utilize [Optimistic Locking With Version Number](http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBMapper.OptimisticLocking.html)
 
