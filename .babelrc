@@ -1,0 +1,17 @@
+{
+  "presets": [
+    ["env", {
+      "targets": {
+        "node": 6.10,
+        "browsers": ["last 10 versions", "ie >= 7"]
+      },
+      "debug": true
+    }]
+  ],
+  "plugins": ["transform-object-rest-spread",
+    ["transform-runtime", {
+      "polyfill": false,
+      "regenerator": true
+    }]
+  ]
+}

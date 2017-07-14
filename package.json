@@ -1,0 +1,47 @@
+{
+  "name": "dynamo-update-expression",
+  "version": "1.0.0",
+  "description": "Generate DynamoDB Update Expression by diff-ing original and updated documents",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "npm run eslint && jest --verbose",
+    "build": "babel --copy-files --out-dir lib --ignore *.spec.js src",
+    "eslint": "./node_modules/.bin/eslint src --quiet"
+  },
+  "dependencies": {
+    "jsonpath": "^0.2.11",
+    "lodash": "^4.17.4"
+  },
+  "devDependencies": {
+    "babel-cli": "~6.24.0",
+    "babel-eslint": "^7.2.1",
+    "babel-plugin-transform-object-rest-spread": "~6.23.0",
+    "babel-plugin-transform-runtime": "~6.23.0",
+    "babel-preset-env": "~1.2.2",
+    "eslint": "~3.18.0",
+    "jest": "~19.0.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sdawood/dynamo-update-expression.git"
+  },
+  "keywords": [
+    "dynamodb",
+    "DynamoDB",
+    "dynamo",
+    "update",
+    "expression",
+    "generator",
+    "diff",
+    "version",
+    "condition",
+    "optimitic",
+    "lock"
+  ],
+  "author": "Shaady Dawood <shaadydawood@gmail.com> (http://github.com/sdawood/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sdawood/dynamo-update-expression/issues"
+  },
+  "homepage": "https://github.com/sdawood/dynamo-update-expression#readme"
+}
