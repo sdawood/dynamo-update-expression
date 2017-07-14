@@ -644,7 +644,7 @@ const updateExpression = due.getVersionLockExpression({
 
 ## Possible use cases
 
-For a more comprehensive list of possible usages see [tests](https://github.com/sdawood/dynamo-update-expression/src/dynamo-update-expression.spec.js)
+For a more comprehensive list of possible usages see [tests](/src/dynamo-update-expression.spec.js)
 
 ## Run the tests
 
