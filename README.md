@@ -48,7 +48,7 @@ See the options available below:
 
   const versionedUpdateExpression = due.getVersionedUpdateExpression({original, modified, condition = '='});
 
-  // Conditional updates (Optimitic Version Locking)
+  // Conditional updates (Optimistic Version Locking)
 
   // To conditionally update if the new value is greater than the value in DynamoDB
   const versionedUpdateExpression = due.getVersionedUpdateExpression({original, modified, useCurrent: false, condition = '<'});
@@ -644,7 +644,7 @@ const updateExpression = due.getVersionLockExpression({
 
 ## Possible use cases
 
-For a more comprehensive list of possible usages see [tests](https://github.com/sdawood/dynamo-update-expression/src/dynamo-update-expression.spec.js)
+For a more comprehensive list of possible usages see [tests](/src/dynamo-update-expression.spec.js)
 
 ## Run the tests
 
