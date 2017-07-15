@@ -535,7 +535,6 @@ describe('dynamodb-update-expression', () => {
             let modified = applyUpdates(original, ADDITIONS);
             modified = applyUpdates(modified, UPDATES);
             modified = applyDeletes(modified, DELETES);
-            console.log(JSON.stringify(modified, null, 4));
             const updateExpression = due.getUpdateExpression({original, modified});
             expect(updateExpression).toEqual({
                 "ExpressionAttributeNames": {

@@ -1,4 +1,6 @@
-[![Build Status](https://travis-ci.org/sdawood/dynamo-update-expression.svg?branch=master)](https://travis-ci.org/sdawood/dynamo-update-expression)
+master|develop
+---|---
+[![Build Status](https://travis-ci.org/sdawood/dynamo-update-expression.svg?branch=master)](https://travis-ci.org/sdawood/dynamo-update-expression)|[![Build Status](https://travis-ci.org/sdawood/dynamo-update-expression.svg?branch=develop)](https://travis-ci.org/sdawood/dynamo-update-expression)
 
 # dynamo-update-expression
 
