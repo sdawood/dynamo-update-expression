@@ -9,7 +9,7 @@ Generate DynamoDB Update Expression by diff-ing original and updated documents.
 
 Allows for generating update expression with no-orphan (create new nodes as you go) or deep paths (ideal for *predefined* document structure), more on that in the examples below.
 
-Optionally include a condition expression with you update to utilize [Optimistic Locking With Version Number](http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBMapper.OptimisticLocking.html)
+Optionally include a condition expression with your update to utilize [Optimistic Locking With Version Number](http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBMapper.OptimisticLocking.html)
 
 
 ```js
@@ -104,7 +104,7 @@ See the options available below:
                'Terrible product! Do no buy this.'
            ]
        },
-       comment: 'This product sells out quicly during the summer',
+       comment: 'This product sells out quickly during the summer',
        'Safety.Warning': 'Always wear a helmet' // attribute name with `.`
    };
   ```
@@ -139,7 +139,7 @@ See the options available below:
                'Actually I take it back, it is alright' // UPDATED *deep* List item
            ]
        },
-       comment: 'This product sells out quicly during the summer',
+       comment: 'This product sells out quickly during the summer',
        'Safety.Warning': 'Always wear a helmet, ride at your own risk!' // UPDATED attribute name with `.`
    };
   ```
@@ -203,7 +203,7 @@ I'd even go further and suggest that you nullify values - not delete keys - for 
 As a rule of thumb, for Lists, always nullify (set to `null` or `undefined`) or empty the strings (set to ""), the update expression would detect and precisely (generate expression to) remove those elements by index.
 DynamoDB eventually collapses your list on the server side after removing the selected indexes.
 For Maps (object keys), you are free to delete the key or to nullify/empty the values. The real decision is, would you prefer to delete a composite node (a parent Map node) e.g. `productReviews`, or you'd rather preserve even if it would end up an empty `Map {}` (or empty `Lists []` in the case above).
-Choose the earlier for free style document store and the latter for schema-like document structure where the processor expects some structure or prefers to follow a function iterator/enumeration style vs null/undefined checking in if/else blocks.
+Choose the earlier for free style document store and the latter for schema-like document structure where the processor expects some structure or prefers to follow a functional iterator/enumeration style vs null/undefined checking in if/else blocks.
 
 
 ## API
@@ -743,7 +743,7 @@ const original = {
              'Terrible product! Do no buy this.'
          ]
      },
-     comment: 'This product sells out quicly during the summer',
+     comment: 'This product sells out quickly during the summer',
      'Safety.Warning': 'Always wear a helmet' // attribute name with `.`
     };
 
@@ -783,7 +783,7 @@ const modified = {
          ],
          "thisIsAVeryLongAttributeNameAndHadToKeepTypingRandomWordsToTryToGetUpTo255CharactersYouWouldThinkThatThisIsEnoughOrThatItWillHappenOftenWhenYouHaveAnAttributeThatLongYouMightAlsoOpenAnIssueAboutItPleaseDoNotSinceTheLibraryDoesTrimYourNamesAndLimitAliasLen": "Value for attribute name with 255 characters excluding the parent path"
      },
-     "comment": "This product sells out quicly during the summer",
+     "comment": "This product sells out quickly during the summer",
      "Safety.Warning": "Value for attribute with DOT",
      "root0": "root0",
      "newParent": {
@@ -865,13 +865,14 @@ const modified = {
 **/
 ```
 
+## Roadmap
+
+- Support diff-ing documents containing native ES2015+ Map and Set types
+- Generate DynamoDB <Typed> <Set> for String/Number/Buffer|ArrayBuffer (base64 encoded)
+- Support DynamoDB <Typed> <Set> ADD and DELETE expressions
+
 ## Contributing
-Issues and pull-requests are welcome. I'm experimenting with automated release notes/changelog generation. That is why commits should follow the `conventional-changelog-format` enforced by ([Commitizen](https://github.com/commitizen/cz-cli)).
-For a detailed explanation of how commit messages should be formatted, the guidelines are identical to the standard used by [Angular](https://github.com/angular/angular.js/blob/master/CONTRIBUTING.md) and described in detail [here](https://github.com/angular/angular.js/blob/master/CONTRIBUTING.md#commit-message-format)
-
-To use `commitizen` conventional-change-log format for your pull requests, commit your code by using `npm run commit` and follow the prompt.
-
-Pull requests are issued against the `develop` branch, which is set to be the default on github.
+See [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## License
 
