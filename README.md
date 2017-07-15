@@ -665,7 +665,7 @@ And optionally:
 You can post process the generated object to apply more elaborate conditions for example:
 ```js
 updateExpression.ConditionExpression = `${updateExpression.ConditionExpression} AND ${SOME_OTHER_CONDITION}`
-documentClient.update({...otherParams, ...updateExpressions});
+documentClient.update({...otherParams, ...updateExpression});
 ````
 
 ## Possible use cases
