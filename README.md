@@ -691,22 +691,22 @@ For a comprehensive list of possible usages and parameter combinations see [test
 ## What about DynamoDB *Set* type?
 Currently DynamoDB Set type, is not a regular JS object, nor it is an ES2015 Set. It is an immutable class-intance that you can only create by invoking a factory method in the document client `createSet(someIterable)`.
 It uses the type of the first element in your iteratble as the Set Type {Numeric | String | [Buffer | ArrayBuffer ]}.
-Once that instance is created, you can't query it for values, and you can't manipulate it, it is only purpose is to `serialize` itself properly into DynamoDB's Supported JSON format.
+Once that instance is created, you can't query it for values, and you can't manipulate it, its only purpose is to `serialize` itself properly into DynamoDB's Supported JSON format.
 
-In short, DynamoDB Set manipulation expressions are currently not supported, and if this module would support Set type, it would rather detect ES2015 Sets and continue from there.
+In short, DynamoDB Set manipulation expressions are currently not supported, and future versions of this module would support Set type by rather detecting ES2015 Sets and continuing from there.
 
 ## Why *ADD* and *DELETE* are not used?
 ADD can be used to increment numbers or ADD an item to a Set. 
-Since the module has no way to detect the intention to increments by `n`, it achieves the same result by using SET #numeric = :incrementedValue.
-That said, [using SET is recommended in general whereever possible over the less preferable operator ADD](http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.UpdateExpressions.html#Expressions.UpdateExpressions.ADD).
+Since the module has no way to detect the intention to increment a numeric by `n`, it achieves the same result by using SET #numeric = :incrementedValue.
+That said, [using SET is recommended in general wherever possible over the less preferable operator ADD](http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.UpdateExpressions.html#Expressions.UpdateExpressions.ADD).
 The same applies to using REMOVE over DELETE; which can only be used with Set Types and is replaceable by REMOVE.
 
 Quoting the article above:
 ```* Note: In general, we recommend using SET rather than ADD.```
 
-For the use cases of using ADD in conjunctions with Sets, see above.
+For the use cases of using ADD in conjunction with Sets, see above.
 
-## What if the document has long attribute names or many nested path levels
+## What if the document has long attribute names or too many nested path levels?
 In some extreme cases the aliased attribute name, or the aliased deep value name might reach or exceed DynamoDB allowed limit of 255 characters (inclusive of the # character in aliases)
 In those cases dynamo-update-expression truncates the name and postfix it with a counter to avoid common-prefix collision.
 
@@ -745,6 +745,7 @@ const original = {
      comment: 'This product sells out quicly during the summer',
      'Safety.Warning': 'Always wear a helmet' // attribute name with `.`
     };
+
 const modified = {
      "id": 123,
      "description": "123 description",
@@ -866,6 +867,10 @@ const modified = {
 ## Contributing
 Issues and pull-requests are welcome. I'm experimenting with automated release notes/changelog generation. That is why commits should follow the `conventional-changelog-format` enforced by ([Commitizen](https://github.com/commitizen/cz-cli)).
 For a detailed explanation of how commit messages should be formatted, the guidelines are identical to the standard used by [Angular](https://github.com/angular/angular.js/blob/master/CONTRIBUTING.md) and described in detail [here](https://github.com/angular/angular.js/blob/master/CONTRIBUTING.md#commit-message-format)
+
+To use `commitizen` conventional-change-log format for your pull requests, commit your code by using `npm run commit` and follow the prompt.
+
+Pull requests are issued against the `develop` branch, which is set to be the default on github.
 
 ## License
 
