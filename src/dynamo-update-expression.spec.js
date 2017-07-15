@@ -29,7 +29,7 @@ const original = Object.freeze({
             'Terrible product! Do no buy this.'
         ]
     },
-    comment: 'This product sells out quicly during the summer',
+    comment: 'This product sells out quickly during the summer',
     'Safety.Warning': 'Always wear a helmet' // attribute name with `.`
 });
 
@@ -197,7 +197,7 @@ describe('dynamodb-update-expression', () => {
                         'Actually I take it back, it is alright' // UPDATED *deep* List item
                     ]
                 },
-                comment: 'This product sells out quicly during the summer',
+                comment: 'This product sells out quickly during the summer',
                 'Safety.Warning': 'Always wear a helmet, ride at your own risk!' // UPDATED attribute name with `.`
             };
 

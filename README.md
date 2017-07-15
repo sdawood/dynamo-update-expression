@@ -104,7 +104,7 @@ See the options available below:
                'Terrible product! Do no buy this.'
            ]
        },
-       comment: 'This product sells out quicly during the summer',
+       comment: 'This product sells out quickly during the summer',
        'Safety.Warning': 'Always wear a helmet' // attribute name with `.`
    };
   ```
@@ -139,7 +139,7 @@ See the options available below:
                'Actually I take it back, it is alright' // UPDATED *deep* List item
            ]
        },
-       comment: 'This product sells out quicly during the summer',
+       comment: 'This product sells out quickly during the summer',
        'Safety.Warning': 'Always wear a helmet, ride at your own risk!' // UPDATED attribute name with `.`
    };
   ```
@@ -743,7 +743,7 @@ const original = {
              'Terrible product! Do no buy this.'
          ]
      },
-     comment: 'This product sells out quicly during the summer',
+     comment: 'This product sells out quickly during the summer',
      'Safety.Warning': 'Always wear a helmet' // attribute name with `.`
     };
 
@@ -783,7 +783,7 @@ const modified = {
          ],
          "thisIsAVeryLongAttributeNameAndHadToKeepTypingRandomWordsToTryToGetUpTo255CharactersYouWouldThinkThatThisIsEnoughOrThatItWillHappenOftenWhenYouHaveAnAttributeThatLongYouMightAlsoOpenAnIssueAboutItPleaseDoNotSinceTheLibraryDoesTrimYourNamesAndLimitAliasLen": "Value for attribute name with 255 characters excluding the parent path"
      },
-     "comment": "This product sells out quicly during the summer",
+     "comment": "This product sells out quickly during the summer",
      "Safety.Warning": "Value for attribute with DOT",
      "root0": "root0",
      "newParent": {
