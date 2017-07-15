@@ -12,8 +12,8 @@ script:
   - npm run test
   - npm run build
 after_success:
-  - if [[ "$TRAVIS_BRANCH" = "develop" ]]; then echo "Build passed, not publishing from branch [$TRAVIS_BRANCH]"; fi
-  - if [[ "$TRAVIS_BRANCH" = "master" ]]; then echo "Build passed, semantic-releasing to www.npmjs.com from [$TRAVIS_BRANCH] ..." && npm run semantic-release; fi
+  - if [[ "$TRAVIS_BRANCH" != "master" ]]; then echo -e "Build passed, not publishing from branch [$TRAVIS_BRANCH]"; fi
+  - if [[ "$TRAVIS_BRANCH" == "master" ]]; then echo -e "Build passed, semantic-releasing to www.npmjs.com from [$TRAVIS_BRANCH] ..." && npm run semantic-release; fi
 branches:
   except:
     - /^v\d+\.\d+\.\d+$/
