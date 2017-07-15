@@ -5,7 +5,7 @@ master|develop
 # dynamo-update-expression
 
 
-Generate DynamoDB Update Expression by diff-ing original and updated documents.
+Generate DynamoDB Update Expression by diff-ing original and updated/modified documents.
 
 Allows for generating update expression with no-orphans (create new nodes as you go) or deep paths (ideal for *predefined* document structure), more on that in the examples below.
 
@@ -13,7 +13,7 @@ Optionally include a condition expression with your update to utilize [Optimisti
 
 
 ```js
-const due = require('./dynamo-update-expression');
+const due = require('dynamo-update-expression');
 
 due.getUpdateExpression({original, modified, ...options});
 
@@ -71,9 +71,9 @@ See the options available below:
 
   ```
 
-  Where original and modified are JSON compatible objects.
+Where original and modified are JSON compatible objects.
 
-  ##### For example:
+##### For example:
 
   Original JSON:
 
