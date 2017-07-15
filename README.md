@@ -868,10 +868,10 @@ const modified = {
 ## Build Targets
 Currently the following target build environments are configured for babel-preset-env plugin
 ```
-"targets": {
-    "node": 6.10,
-    "browsers": ["last 10 versions", "ie >= 7"]
-  },
+ "targets": {
+   "node": 4.3,
+   "browsers": ["last 10 versions", "ie >= 7"]
+ }
 ```
 In case this turns out to be not generous enough, more backward compatible babel transpilation targets would be added.
 
