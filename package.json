@@ -1,6 +1,6 @@
 {
   "name": "dynamo-update-expression",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Generate DynamoDB Update Expression by diff-ing original and updated documents",
   "main": "lib/index.js",
   "scripts": {
