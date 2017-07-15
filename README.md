@@ -73,7 +73,7 @@ See the options available below:
 
   Where original and modified are JSON compatible objects.
 
-  For example:
+  ##### For example:
 
   Original JSON:
 
@@ -580,6 +580,7 @@ Also useful for auto-incrementing version, with backward compatibility with docu
 Generates a version check/lock expression.
 Useful to implement Try-Lock behaviour by locking an expiry range, or a processing range in first-winner takes it all style.
 Can be used auto-version records, taking backward compatibility into consideration. See examples.
+
 Parameters:
 - original: original document. Optional in many of the use cases
 - versionPath: JSONPATH path to your version attribute of choice, default: '$.version'
@@ -648,6 +649,24 @@ const updateExpression = due.getVersionLockExpression({
 **/
 ```
 
+## Mix and Match
+This module is non invasive, it doesn't make decisions for you or pre-bake an update expression that you can't extend.
+Remember that the result is an object that is compatible with the DynamoDB Item-Client and Document-Client of the `aws-sdk` library.
+You can always post-process this object before sending off to `aws-sdk` DynamoDB.*Client. The result structure is straight forward.
+
+- UpdateExpression: string, currently only using `SET` (for add/update) and `REMOVE` (for deletes)
+- ExpressionAttributeNames: object of pairs `'#aliasedAttributeName': attributeName`
+- ExpressionAttributeValues: object of pairs `':aliasedAttributeNAme': attributeValue'`
+
+And optionally:
+- ConditionExpression `'#aliasedAttributeName ${operator} :aliasedAttributeNAme`
+
+You can post process the generated object to apply more elaborate conditions for example:
+```js
+updateExpression.ConditionExpression = `${updateExpression.ConditionExpression} AND ${SOME_OTHER_CONDITION}`
+documentClient.update({...otherParams, ...updateExpressions});
+````
+
 ## Possible use cases
 
 - **General Purpose**: Generator for CRUD expressions starting from a fully-loaded-current document (use `orphans = false`, which is the default value), or from a partial that doesn't violate the structure of the DynamoDB document, e.g. doesn't add deep attributes into parent Map/List that doesn't exist. In the partial case, use `orphans = true`
@@ -668,6 +687,24 @@ For a comprehensive list of possible usages and parameter combinations see [test
   ```
   npm test
   ```
+
+## What about DynamoDB *Set* type?
+Currently DynamoDB Set type, is not a regular JS object, nor it is an ES2015 Set. It is an immutable class-intance that you can only create by invoking a factory method in the document client `createSet(someIterable)`.
+It uses the type of the first element in your iteratble as the Set Type {Numeric | String | [Buffer | ArrayBuffer ]}.
+Once that instance is created, you can't query it for values, and you can't manipulate it, it is only purpose is to `serialize` itself properly into DynamoDB's Supported JSON format.
+
+In short, DynamoDB Set manipulation expressions are currently not supported, and if this module would support Set type, it would rather detect ES2015 Sets and continue from there.
+
+## Why *ADD* and *DELETE* are not used?
+ADD can be used to increment numbers or ADD an item to a Set. 
+Since the module has no way to detect the intention to increments by `n`, it achieves the same result by using SET #numeric = :incrementedValue.
+That said, [using SET is recommended in general whereever possible over the less preferable operator ADD](http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.UpdateExpressions.html#Expressions.UpdateExpressions.ADD).
+The same applies to using REMOVE over DELETE; which can only be used with Set Types and is replaceable by REMOVE.
+
+Quoting the article above:
+```* Note: In general, we recommend using SET rather than ADD.```
+
+For the use cases of using ADD in conjunctions with Sets, see above.
 
 ## What if the document has long attribute names or many nested path levels
 In some extreme cases the aliased attribute name, or the aliased deep value name might reach or exceed DynamoDB allowed limit of 255 characters (inclusive of the # character in aliases)
