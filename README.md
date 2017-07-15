@@ -652,7 +652,7 @@ const updateExpression = due.getVersionLockExpression({
 
 - **General Purpose**: Generator for CRUD expressions starting from a fully-loaded-current document (use `orphans = false`, which is the default value), or from a partial that doesn't violate the structure of the DynamoDB document, e.g. doesn't add deep attributes into parent Map/List that doesn't exist. In the partial case, use `orphans = true`
 
-- **Serveless Event De-duplication**: Generator for Version Validation and/or Try-Lock expression that are employed to deduplicate AWS Lambda multiple (duplicated) invocations.
+- **Serverless Event De-Duplication**: Generator for Version Validation and/or Try-Lock expression that are employed to deduplicate AWS Lambda multiple (duplicated) invocations.
 This is a problem with Lambda functions that AWS admits to, but dismisses as a side effect of high-scalability and multi-availability-zone distributed infrastructure.
 AWS would recommend that you make your Lambda function idempotent; which is only possible in a pure functional world where your Lambda never creates a side effect or communicate with an external System/API/DB, etc.
  A Practical solution is version validation of the version value included in the Lambda-request-payload against a DynamoDB table.
