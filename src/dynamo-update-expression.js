@@ -1,19 +1,13 @@
 const jp = require('jsonpath');
 const _ = require('lodash');
 
-// http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.Attributes.html
-/*
- * You can use any attribute name in a document path, provided that the first character is a-z or A-Z and the second character (if present) is a-z, A-Z, or 0-9.
- * If an attribute name does not meet this requirement, you will need to define an expression attribute name as a placeholder.
- * For more information, see http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.ExpressionAttributeNames.html
- */
-
 module.exports = {
     diff,
     getUpdateExpression,
     getVersionedUpdateExpression,
     getVersionLockExpression
 };
+
 
 function getVersionLockExpression({original, versionPath = '$.version', newVersion = undefined, condition = '=', orphans = false} = {}) {
     let currentVersion = original ? jp.value(original, versionPath) : null;
@@ -29,9 +23,9 @@ function getVersionLockExpression({original, versionPath = '$.version', newVersi
         }
     }
     const _original = {};
-    jp.value(_original, versionPath, currentVersion); // 2nd run start = 1000, pass null as currentVersion
+    jp.value(_original, versionPath, currentVersion);
     const modified = {};
-    jp.value(modified, versionPath, newAutoVersion || newVersion); // start = 1000, wont work
+    jp.value(modified, versionPath, newAutoVersion || newVersion);
     return getVersionedUpdateExpression({
         original: _original,
         modified,
@@ -42,6 +36,7 @@ function getVersionLockExpression({original, versionPath = '$.version', newVersi
         condition
     });
 }
+
 
 function version({currentVersion, newVersion, useCurrent = true, versionPath = '$.version', condition = '=', aliasContext = {}}) {
     const conditionExpression = {
@@ -74,6 +69,7 @@ function version({currentVersion, newVersion, useCurrent = true, versionPath = '
     return conditionExpression;
 }
 
+
 function withCondition(updateExpression, conditionExpression) {
     return {
         UpdateExpression: updateExpression.UpdateExpression,
@@ -89,31 +85,7 @@ function withCondition(updateExpression, conditionExpression) {
     };
 }
 
-/**
- * currentVersion is read from original document.
- * Allows for a one-way-trip conditional-update check.
- * This is useful for use cases where you read the version value from a payload received by your lambda/worker, and you need
- * to make sure that you `lock` or reserve that `range-marker` or `version` number without doing a read first.
- * Example:
- * Normal use case:
- * original = {version: 1}, modified = {version: 2}
- * getVersionedUpdateExpression({original, modified, useCurrent: true, versionPath: '$.version', condition: '='})
- * Special use case:
- * payload = {..., start: 1000}, value in Dynamo is previous start === 1
- * To lock that range start, call update with the UpdateExpression from this call:
- * getVersionedUpdateExpression({original: {}, modified: {start: 1000}, useCurrent: false, versionPath: '$.start', condition: '<'})
- * If this range was not yet started by other workers, you would successfully update start to 1000
- * Any subsequent calls from duplicate or falling-behind workers (receiving the same payload with start = 1000) would fail to update start to any value not grater than 1000
- * hence erroring out, indicating a duplicate-processing for the same range.
- * @param original
- * @param modified
- * @param currentVersion
- * @param versionPath
- * @param condition
- * @param orphans
- * @param aliasContext
- * @returns {{UpdateExpression: string, ExpressionAttributeNames: {}, ExpressionAttributeValues: {}}}
- */
+
 function getVersionedUpdateExpression({original = {}, modified = {}, versionPath = '$.version', useCurrent = true, currentVersion, condition = '=', orphans = false, aliasContext = {truncatedAliasCounter: 1}}) {
     let updateExpression = getUpdateExpression({original, modified, orphans, aliasContext: {...aliasContext, prefix: ''}});
     currentVersion = currentVersion || jp.value(original, versionPath);
@@ -122,7 +94,6 @@ function getVersionedUpdateExpression({original = {}, modified = {}, versionPath
     return updateExpression;
 }
 
-// Never use a regex with /g for test, it returns alternating values since it keeps state between calls: https://stackoverflow.com/questions/2630418/javascript-regex-returning-true-then-false-then-true-etc
 
 const regex = {
     numericSubscript$: /(.*)(\[[\d]+\])$/,
@@ -134,15 +105,7 @@ const regex = {
 
 const maxAttrNameLen = 255;
 
-/**
- * Note: all path parts are aliased, avoiding cases with key names containing '.',
- * also the huge list of Dynamo reserved (very common) words http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/ReservedWords.html
- * @param original
- * @param modified
- * @param orphans
- * @param supportSets
- * @returns {{UpdateExpression: string, ExpressionAttributeNames: {}, ExpressionAttributeValues: {}}}
- */
+
 function getUpdateExpression({original, modified, orphans = false, supportSets = false, aliasContext = {truncatedAliasCounter: 1}}) {
     const {SET, REMOVE, DELETE} = partitionedDiff(original, modified, orphans, supportSets);
 
@@ -152,18 +115,6 @@ function getUpdateExpression({original, modified, orphans = false, supportSets =
         ExpressionAttributeValues: {}
     };
 
-    /**
-     * Note that the remove expression is consisting of all-leaves. What might appear inefficient at first glance, is quiet useful
-     * when you think about it in the context of a a scenario, it is best to delete the leaves and leave the parent collections in there, empty as {} or []
-     * which makes it easier to iterate over in code later instead of doing null checks.
-     * The other solid benefit, is that if you want to re-add a leaf later or introduce a new leaf, the parent collection has to exist
-     * or else the update expression doesn't pass validation, you would be thankful then that the previous remove expression did not clean up
-     * parent nodes
-     *
-     * See https://forums.aws.amazon.com/thread.jspa?threadID=162907
-     * @param removes
-     * @returns {string}
-     */
     function removeExpression(removes) {
         const paths = removes
             .map(node => alias(node, updateExpression.ExpressionAttributeNames, undefined, aliasContext).path);
@@ -266,12 +217,7 @@ function alias(node, nameMap, valueMap, aliasContext = {}) {
     };
 }
 
-/**
- * Materialize diff document for every CRUD action, useful for logging and testing
- * @param original
- * @param modified
- * @returns {{ADD, SET, DELETE}}
- */
+
 function calcPatches(original, modified) {
     const {ADD, DELETE, SET} = diff(original, modified);
     const addPatch = ADD.reduce((acc, field) => {
@@ -292,17 +238,7 @@ function calcPatches(original, modified) {
     return {ADD: addPatch, SET: updatePatch, DELETE: removePatch};
 }
 
-/**
- * Calculate canonical diff ADD/SET/DELETE then partition into Dynamo update groups where:
- *
- * SET — Modifying or Adding Item Attributes
- * REMOVE — Deleting Attributes From An Item
- * ADD — Updating Numbers and Sets, not recommended, using SET instead
- * DELETE — Removing Elements From A Set (Numeric, String, Binary)
- * For more info, see: http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.UpdateExpressions.html
- * @param original
- * @param modified
- */
+
 function partitionedDiff(original, modified, orphans = false, supportSets = false) {
     const {ADD, DELETE, SET} = diff(original, modified, orphans);
     const [_DELETE, _REMOVE] = supportSets ? _.partition(
@@ -324,11 +260,6 @@ function partitionedDiff(original, modified, orphans = false, supportSets = fals
     };
 }
 
-// NOTE: elements of a List should be removed by nullifying the value, not popping the element. If the element would be popped, the List would collapse, effectively altering the meaning of the positions.
-// Nullifying the items allows for creation of a REMOVE expressions that removes the correct elements every time, it also allows to mix SET & REMOVE of list elements
-// within the same update expression without running into `Overlapping path` errors or risking corrupting the list data.
-// as mention above, even if you want to delete all the items in the list in this update, nullify all the items and don't delete the list, Dynamo would collapse the remote list as needed
-// with each removal up to the point where you have an empty list. Later your code will safely enumerate an empty list instead of doing null checks and recreating the list.
 
 function diff(original, modified, orphans = false) {
     const originalNodes = allNodes(original);
@@ -342,12 +273,9 @@ function diff(original, modified, orphans = false) {
 
     let addedNodes;
     if (orphans) {
-        // new deep descendant paths are returned, even if the ancestor node is new.
-        // Plays well when you use json path to set deep values but causes TypeError: Cannot set property 'z' of undefined with js syntax setting x.y.z = value if y and z are new
         addedNodes = _.differenceBy(modifiedLeafNodes, originalLeafNodes, 'path');
     } else {
         addedNodes = _.differenceBy(modifiedNodes, originalNodes, 'path');
-        // for new parents, pop new children sub-trees from the list
         addedNodes = ancestorNodes(addedNodes, true);
     }
 
@@ -391,9 +319,6 @@ function allNodes(data) {
         .nodes(data, '$..*')
         .map(({path, value}) => ({path: jp.stringify(path), value}))
         .sort(sortBy('path'));
-    // NOTE: jp.stringify preserves attribute names that might contain a '.' in the form '$.x["prefix.suffix"]'
-    // Using parts.join('.') would confuse the attribute name with real path e.g. $.x.prefix.suffix
-    // Paths of numeric subscripts would become formatted as $.x[0] instead of $.x.0
 }
 
 function leafNodes(nodes, sort = false) {
@@ -407,24 +332,7 @@ function leafNodes(nodes, sort = false) {
         }, []);
 }
 
-/**
- * Returns minimal set of common ancestor nodes
- *
- * ancestor nodes !== non-leaf nodes
- * Example:
- * ['$.a', '$.a.b', '$.a.b[0]', '$a.c', '$.a.c.d', '$.x.y', '$x.y.z', '$x.y.z.w']
- * Non-leaf nodes:
- * ['$.a', '$.a.b', '$a.c', '$.x.y', '$x.y.z']
- * Ancestor nodes:
- * ['$.a', '$.x.y']
- * Which is useful in finding the common ancestor for newly created sub-trees to make sure the
- * Dynamo UpdateExpression doesn't include any broken paths with orphan leaves.
- * For such use case the function if applied on a list of all new paths it reduces the list into minmal common ancestors
- *
- * Note: The list of nodes has to be sorted by path, in ascending order.  Otherwise sort = true flag must be use to sort inside the function
- * @param nodes
- * @param sort
- */
+
 function ancestorNodes(nodes, sort = false) {
     if (sort) nodes.sort(sortBy('path'));
 
@@ -440,21 +348,3 @@ function ancestorNodes(nodes, sort = false) {
         return acc;
     }, []);
 }
-
-/**
- * Can traverse be used in place of jsonpath?
- * Pros:
- * Smaller dependency and probably more efficient traversing sparing jsonpath parsing overheads.
- *
- * Yes Cases:
- * - traverse.reduce(fn) can do the equivalent of jp.nodes()
- * - leaves can be filtered in/out while reducing using this.isLeaf on the node. Note that call backs are bound, hence can't use arrow functions.
- *
- * No Cases:
- * - traverse.nodes() returns values only while jp.nodes() returns {path, node}. Solved!
- * - paths for numeric array items are returned as ['a', 'b', '0'] instead of ['a', 'b', 0] with jsonpath. Solvable.
- * - traverse.set(path, value) blindly sets new nodes as map members, even if there is a numeric index. jsonpath detects numeric indexes and creates new arrays. `if (!hasOwnProperty.call(node, key)) node[key] = {};` is buried deep in traverse code.
- * - traverse lacks .stringify(path), but it can easily be done by reducing the path array into required format.
- */
-
-
