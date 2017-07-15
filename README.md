@@ -264,7 +264,7 @@ Of course if your *original* document was freshly loaded from DynamoDB, then you
 In case you know that you are starting with a *partial* document, you would need to make a choice, to allow orphans and preserve any possible Map/List at the path,
 or to overwrite the whole node with your update.
 By default, the module would generates an update expression that won't be considered *invalid* by DynamoDB for including path with levels not existing in your table,
-i.e. if `SET #pictures.#topView` is used, and your DynamoDB Document didn't not have `pictures` map, you would get an error: "The document path provided in the update expression is invalid for update" when you call `documentClient.update(...updateExpression)` .
+i.e. if `SET #pictures.#topView` is used, and your DynamoDB Document didn't have `pictures` map, you would get an error: "The document path provided in the update expression is invalid for update" when you call `documentClient.update(...updateExpression)` .
 
 In the use cases where you document has a predefined structure, and you won't want to allow free-style additions and you need to make sure that partial updates for valid deep paths are not overwriting parent nodes, set `orphans = true`.
 
