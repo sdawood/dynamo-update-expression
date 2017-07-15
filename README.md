@@ -5,15 +5,15 @@ master|develop
 # dynamo-update-expression
 
 
-Generate DynamoDB Update Expression by diff-ing original and updated documents.
+Generate DynamoDB Update Expression by diff-ing original and updated/modified documents.
 
-Allows for generating update expression with no-orphan (create new nodes as you go) or deep paths (ideal for *predefined* document structure), more on that in the examples below.
+Allows for generating update expression with no-orphans (create new nodes as you go) or deep paths (ideal for *predefined* document structure), more on that in the examples below.
 
 Optionally include a condition expression with your update to utilize [Optimistic Locking With Version Number](http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBMapper.OptimisticLocking.html)
 
 
 ```js
-const due = require('./dynamo-update-expression');
+const due = require('dynamo-update-expression');
 
 due.getUpdateExpression({original, modified, ...options});
 
@@ -23,7 +23,7 @@ due.getVersionLockExpression({newVersion: expiryTimeStamp, condition: '<'});
 
 // Bonus!
 
-const {ADD, DELETE, SET} = diff(original, modified /* orphans = false*/);
+const {ADD, DELETE, SET} = due.diff(original, modified /* orphans = false*/);
 ```
 
 See the options available below:
@@ -71,9 +71,9 @@ See the options available below:
 
   ```
 
-  Where original and modified are JSON compatible objects.
+Where original and modified are JSON compatible objects.
 
-  ##### For example:
+##### For example:
 
   Original JSON:
 
@@ -264,9 +264,9 @@ Of course if your *original* document was freshly loaded from DynamoDB, then you
 In case you know that you are starting with a *partial* document, you would need to make a choice, to allow orphans and preserve any possible Map/List at the path,
 or to overwrite the whole node with your update.
 By default, the module would generates an update expression that won't be considered *invalid* by DynamoDB for including path with levels not existing in your table,
-i.e. if `SET #pictures.#topView` is used, and your DynamoDB Document didn't not have `pictures` map, you would get an error: "The document path provided in the update expression is invalid for update" when you call `documentClient.update(...updateExpression)` .
+i.e. if `SET #pictures.#topView` is used, and your DynamoDB Document didn't have `pictures` map, you would get an error: "The document path provided in the update expression is invalid for update" when you call `documentClient.update(...updateExpression)` .
 
-In the use cases where you document has a predefined structure, and you won't want to allow free-style additions and you need to make sure that partial updates for valid deep paths are not overwriting parent nodes, set `orphans = true`.
+In the use cases where your document has a predefined structure, and you won't want to allow free-style additions and you need to make sure that partial updates for valid deep paths are not overwriting parent nodes, set `orphans = true`.
 
 Here is the same example with *orphans = true*
 
@@ -672,7 +672,7 @@ documentClient.update({...otherParams, ...updateExpressions});
 
 - **General Purpose**: Generator for CRUD expressions starting from a fully-loaded-current document (use `orphans = false`, which is the default value), or from a partial that doesn't violate the structure of the DynamoDB document, e.g. doesn't add deep attributes into parent Map/List that doesn't exist. In the partial case, use `orphans = true`
 
-- **Serverless Event De-Duplication**: Generator for Version Validation and/or Try-Lock expression that are employed to deduplicate AWS Lambda multiple (duplicated) invocations.
+- **Serverless Event De-Duplication**: Generator for Version Validation and/or Try-Lock expressions that are employed to deduplicate AWS Lambda multiple (duplicated) invocations.
 This is a problem with Lambda functions that AWS admits to, but dismisses as a side effect of high-scalability and multi-availability-zone distributed infrastructure.
 AWS would recommend that you make your Lambda function idempotent; which is only possible in a pure functional world where your Lambda never creates a side effect or communicate with an external System/API/DB, etc.
  A Practical solution is version validation of the version value included in the Lambda-request-payload against a DynamoDB table.
@@ -865,11 +865,21 @@ const modified = {
 **/
 ```
 
+## Build Targets
+Currently the following target build environments are configured for babel-preset-env plugin
+```
+ "targets": {
+   "node": 4.3,
+   "browsers": ["last 10 versions", "ie >= 7"]
+ }
+```
+In case this turns out to be not generous enough, more backward compatible babel transpilation targets would be added.
+
 ## Roadmap
 
 - Support diff-ing documents containing native ES2015+ Map and Set types
-- Generate DynamoDB <Typed> <Set> for String/Number/Buffer|ArrayBuffer (base64 encoded)
-- Support DynamoDB <Typed> <Set> ADD and DELETE expressions
+- Generate DynamoDB \<Typed\> \<Set\> for String/Number/Buffer|ArrayBuffer (base64 encoded)
+- Support DynamoDB \<Typed\> \<Set\> ADD and DELETE expressions
 
 ## Contributing
 See [CONTRIBUTING.md](CONTRIBUTING.md)
