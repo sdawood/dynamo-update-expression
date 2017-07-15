@@ -9,5 +9,5 @@ node_js:
   - "6.10"
 
 before_install:
-  - npm i -g npm@^4
+  - npm i -g npm@^5
 

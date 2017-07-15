@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/sdawood/dynamo-update-expression.png?branch=master)](https://travis-ci.org/sdawood/dynamo-update-expression)
+[![Build Status](https://travis-ci.org/sdawood/dynamo-update-expression.svg?branch=master)](https://travis-ci.org/sdawood/dynamo-update-expression)
 
 # dynamo-update-expression
 
@@ -15,7 +15,7 @@ const due = require('./dynamo-update-expression');
 
 due.getUpdateExpression({original, modified, ...options});
 
-due.getVersionedUpdateExpression({original, modified, versionPath = '$.path.to.version', condition = '=');
+due.getVersionedUpdateExpression({original, modified, versionPath: '$.path.to.version', condition: '='});
 
 due.getVersionLockExpression({newVersion: expiryTimeStamp, condition: '<'});
 
@@ -46,19 +46,19 @@ See the options available below:
 
   // Use Case 2: To conditionally update only if the current version in DynamoDB has not changed since original was loaded
 
-  const versionedUpdateExpression = due.getVersionedUpdateExpression({original, modified, condition = '='});
+  const versionedUpdateExpression = due.getVersionedUpdateExpression({original, modified, condition: '='});
 
   // Conditional updates (Optimistic Version Locking)
 
   // To conditionally update if the new value is greater than the value in DynamoDB
-  const versionedUpdateExpression = due.getVersionedUpdateExpression({original, modified, useCurrent: false, condition = '<'});
+  const versionedUpdateExpression = due.getVersionedUpdateExpression({original, modified, useCurrent: false, condition: '<'});
 
   // Use Case 3: TRY-LOCK behaviour
 
   // To validate that the range you are about to process hasn't been processed by a different worker
   const rangeStart = 1000;
   const updateExpression = due.getVersionLockExpression({
-      versionPath: '$.path.to.rangeAttribute'
+      versionPath: '$.path.to.rangeAttribute',
       newVersion: rangeStart,
       condition: '<'
   });
@@ -184,24 +184,28 @@ The returned "UpdateExpression" object would be:
 ## How to REMOVE item at \[index\] from a list
 For best results, never pop or splice a list to remove an item; doing so would collapse the list and shift the indexes down by the number of removed items, effectively changing the item identifier.
 If the list indexes can't be trusted to generate the SET/ADD/REMOVE expressions, the only possible solution would be to include a version of the original list
-minus the removed values, - usually by comparing values, since the indexes would be meaningless - then SET the #list to the new :list. Something that would not be ideal in the case of lists with a large number of items.
+minus the removed values, - usually by comparing values, since the indexes would be meaningless - then SET the #list to the new :list.
+Something that would not be ideal in the case of lists with a large number of items.
 
 `dynamo-update-expression` assumes that you know better not to splice your lists, it detects nullified items (set to null or undefined) and strings set to empty string ""
 
 **Note: DynamoDB doesn't allow a value to be an empty string and would remove an attribute if you set the value to ""**
 
-The benefits of nullifying/emptying List items are double fold. Firstly, we are able to generate a precise update expression that only REMOVE the targeted items. Thus avoiding the sub-optimal solution of including a merged list of (all - removed) or worse risk overwriting the whole list in case of an unstable merge/diff of the lists.
+The benefits of nullifying/emptying List items are double fold. Firstly, we are able to generate a precise update expression that only REMOVE the targeted items.
+Thus avoiding the sub-optimal solution of including a merged list of (all - removed) or worse risk overwriting the whole list in case of an unstable merge/diff of the lists.
 In addition, it is almost always a good idea to preserve the structure of the document, by keeping empty collections (List/Map) in this case contrary to deleting the empty collection, as some other solutions would do if the list is empty.
 Deleting the collection would force your code to do null-checking in future reads instead of the functional-style iteration over collections with the safety of no-op in case they turn out to be empty.
 
 I'd even go further and suggest that you nullify values - not delete keys - for Map child nodes/leaves, if you would like to preserve the document structure and avoid null-checking in subsequent reads as discussed.
 
-As a rule of thumb, for Lists, always nullify (set to `null` or `undefined`) or empty the strings (set to ""), the update expression would detect and precisely (generate expression to) remove those elements by index. DynamoDB eventually collapses your list on the server side after removing the selected indexes.
-For Maps (object keys), you are free to delete the key or to nullify/empty the values. Choose the earlier for schema-like document structure and the latter for free style document store.
+As a rule of thumb, for Lists, always nullify (set to `null` or `undefined`) or empty the strings (set to ""), the update expression would detect and precisely (generate expression to) remove those elements by index.
+DynamoDB eventually collapses your list on the server side after removing the selected indexes.
+For Maps (object keys), you are free to delete the key or to nullify/empty the values. The real decision is, would you prefer to delete a composite node (a parent Map node) e.g. `productReviews`, or you'd rather preserve even if it would end up an empty `Map {}` (or empty `Lists []` in the case above).
+Choose the earlier for free style document store and the latter for schema-like document structure where the processor expects some structure or prefers to follow a function iterator/enumeration style vs null/undefined checking in if/else blocks.
 
 
 ## API
-#### getUpdateExpression({original, modified, orphans = false})
+### getUpdateExpression({original, modified, orphans = false})
 Generates a comprehensive update expression for added, modified, and removed attributes at any arbitrary deep paths
 
 Parameters:
@@ -403,7 +407,7 @@ Notice: `SET #productReview.#fiveStar.#comment = :productReviewFiveStarComment` 
 
 The choice is yours depending on how you want the structure of your document to be, allowing free-style updates or only allowing strict-schema-like updates
 
-#### getVersionedUpdateExpression({original = {}, modified = {}, versionPath = '$.version', useCurrent = true, condition = '=', orphans = false, currentVerion})
+### getVersionedUpdateExpression({original = {}, modified = {}, versionPath = '$.version', useCurrent = true, condition = '=', orphans = false, currentVerion})
 Generates a conditional update expression that utilizes DynamoDB's guarantee for [Optimistic Locking With Version Number](http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBMapper.OptimisticLocking.html) to make sure that updates are not lost or applied out of order and that stale data is not being used for modifications.
 Always remember that you can choose any attribute to be your version attribute, no matter how deeply embedded in the document.
 
@@ -566,11 +570,11 @@ const updateExpression = due.getVersionedUpdateExpression({
 **/
 ```
 
-### Sugar
+## Sugar
 For use cases where the version attribute is always incrementing e.g. processing start index.
 Also useful for auto-incrementing version, with backward compatibility with documents that were not initially versioned.
 
-#### getVersionLockExpression({original, versionPath = '$.version', newVersion = undefined, condition = '=', orphans = false} = {})
+### getVersionLockExpression({original, versionPath = '$.version', newVersion = undefined, condition = '=', orphans = false} = {})
 Generates a version check/lock expression.
 Useful to implement Try-Lock behaviour by locking an expiry range, or a processing range in first-winner takes it all style.
 Can be used auto-version records, taking backward compatibility into consideration. See examples.
@@ -599,9 +603,9 @@ const updateExpression = due.getVersionLockExpression({});
 **/
 ```
 
-##### Example: conditional update expression for version-lock with new version auto-incremented value ', () => {
+##### Example: conditional update expression for version-lock with new version auto-incremented value
 ```js
-const original = {version: 1}; // can be arbitrary complex document, simipliefid for the sake of clarity
+const original = {version: 1}; // can be arbitrary complex document, simplifeid for the sake of clarity
 const updateExpression = due.getVersionLockExpression({
    original,
    condition: '='
@@ -644,7 +648,18 @@ const updateExpression = due.getVersionLockExpression({
 
 ## Possible use cases
 
-For a more comprehensive list of possible usages see [tests](/src/dynamo-update-expression.spec.js)
+- **General Purpose**: Generator for CRUD expressions starting from a fully-loaded-current document (use `orphans = false`, which is the default value), or from a partial that doesn't violate the structure of the DynamoDB document, e.g. doesn't add deep attributes into parent Map/List that doesn't exist. In the partial case, use `orphans = true`
+
+- **Serveless Event De-duplication**: Generator for Version Validation and/or Try-Lock expression that are employed to deduplicate AWS Lambda multiple (duplicated) invocations.
+This is a problem with Lambda functions that AWS admits to, but dismisses as a side effect of high-scalability and multi-availability-zone distributed infrastructure.
+AWS would recommend that you make your Lambda function idempotent; which is only possible in a pure functional world where your Lambda never creates a side effect or communicate with an external System/API/DB, etc.
+ A Practical solution is version validation of the version value included in the Lambda-request-payload against a DynamoDB table.
+ Notice that you would create the conditional update expression using the value from the request-payload, `NOT` by loading the current value from DynamoDB (that would invalidate the rationale behind the conditional update). Lambda would set the version (@ versionPath) in DynamoDB to `currentVersion + 1` only if DynamoDB's `currentVersion` is equal to the `currentVersion` value included with the payload, otherwise, mark this invocation as `duplicate`.
+ It is recommended that the Lambda function doesn't `callback(error)` in that case, since you wouldn't want AWS to `retry` with the exact same payload up to 3 times; a behaviour that is currently not-configurable.
+- **Serverless Stream Processing**: Another useful use with Lambda functions is the Try-Lock behaviour to orchasterate multiple workers/processors either by locking a token-time-range or by making sure the stream-range they are about to process hasn't been processed by another (possibly duplicate) Lambda.
+  
+
+For a comprehensive list of possible usages and parameter combinations see [tests](/src/dynamo-update-expression.spec.js)
 
 ## Run the tests
 
@@ -808,6 +823,10 @@ const modified = {
 }
 **/
 ```
+
+## Contributing
+Issues and pull-requests are welcome. I'm experimenting with automated release notes/changelog generation. That is why commits should follow the `conventional-changelog-format` enforced by ([Commitizen](https://github.com/commitizen/cz-cli)).
+For a detailed explanation of how commit messages should be formatted, the guidelines are identical to the standard used by [Angular](https://github.com/angular/angular.js/blob/master/CONTRIBUTING.md) and described in detail [here](https://github.com/angular/angular.js/blob/master/CONTRIBUTING.md#commit-message-format)
 
 ## License
 
