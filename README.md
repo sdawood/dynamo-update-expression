@@ -868,8 +868,8 @@ const modified = {
 ## Roadmap
 
 - Support diff-ing documents containing native ES2015+ Map and Set types
-- Generate DynamoDB <Typed> <Set> for String/Number/Buffer|ArrayBuffer (base64 encoded)
-- Support DynamoDB <Typed> <Set> ADD and DELETE expressions
+- Generate DynamoDB \<Typed\> \<Set\> for String/Number/Buffer|ArrayBuffer (base64 encoded)
+- Support DynamoDB \<Typed\> \<Set\> ADD and DELETE expressions
 
 ## Contributing
 See [CONTRIBUTING.md](CONTRIBUTING.md)
