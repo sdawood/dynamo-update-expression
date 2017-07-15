@@ -211,9 +211,9 @@ Choose the earlier for free style document store and the latter for schema-like 
 Generates a comprehensive update expression for added, modified, and removed attributes at any arbitrary deep paths
 
 Parameters:
-- original: original document, either fully loaded from dynamodb or a partial projection.
-- modified: document that includes additions, modifications and deletes
-- orphans: Use orphans = false (default) when you are using DynamoDB to store free style document structure.
+- `original`: original document, either fully loaded from dynamodb or a partial projection.
+- `modified`: document that includes additions, modifications and deletes
+- `orphans`: Use orphans = false (default) when you are using DynamoDB to store free style document structure.
 DynamoDB doesn't allow SET operations on a deep path if some levels are missing. By using orphans = false, *dynamo-update-expression* would make sure to produce
 SET expressions for the first ancestor node that is not in your original document. This can go as deep as required.
 
@@ -414,13 +414,13 @@ Generates a conditional update expression that utilizes DynamoDB's guarantee for
 Always remember that you can choose any attribute to be your version attribute, no matter how deeply embedded in the document.
 
 Parameters:
-- original: original document, either fully loaded from DynamoDB or a partial projection.
-- modified: document that includes additions, modifications and deletes
-- versionPath: JSONPATH path to your version attribute of choice, default: '$.version'
-- useCurrent: if true, the value @ versionPath is read from original document is used in the condition expression, otherwise, the modified version is used.
-- condition: currently supporting simple binary operators kind of string, condition expression would be for example: #version = :version, meaning the version attribute in DynamoDB < the selected version value (current or new)
-- orphans: see above.
-- currentVersion: Optional. If passed, allows your code to override reading currentVersion from original document, see example below.
+- `original`: original document, either fully loaded from DynamoDB or a partial projection.
+- `modified`: document that includes additions, modifications and deletes
+- `versionPath`: JSONPATH path to your version attribute of choice, default: '$.version'
+- `useCurrent`: if true, the value @ versionPath is read from original document is used in the condition expression, otherwise, the modified version is used.
+- `condition`: currently supporting simple binary operators kind of string, condition expression would be for example: #version = :version, meaning the version attribute in DynamoDB < the selected version value (current or new)
+- `orphans`: see above.
+- `currentVersion`: Optional. If passed, allows your code to override reading currentVersion from original document, see example below.
 
 ##### Example: Only update if version in DynamoDB is (*still*) equal to original document
 ```js
@@ -582,11 +582,11 @@ Useful to implement Try-Lock behaviour by locking an expiry range, or a processi
 Can be used auto-version records, taking backward compatibility into consideration. See examples.
 
 Parameters:
-- original: original document. Optional in many of the use cases
-- versionPath: JSONPATH path to your version attribute of choice, default: '$.version'
-- newVersion: new value for the version attribute. Optional in auto-versioning use cases.
-- condition: simple binary operato, condition expression would be for example: #version = :version, meaning the version attribute in DynamoDB < the selected version value (current or new)
-- orphans: see above.
+- `original`: original document. Optional in many of the use cases
+- `versionPath`: JSONPATH path to your version attribute of choice, default: '$.version'
+- `newVersion`: new value for the version attribute. Optional in auto-versioning use cases.
+- `condition`: simple binary operato, condition expression would be for example: #version = :version, meaning the version attribute in DynamoDB < the selected version value (current or new)
+- `orphans`: see above.
 
 ##### Example: version-lock with auto versioning and backward compatibility
 ```js
@@ -624,6 +624,7 @@ const updateExpression = due.getVersionLockExpression({
 **/
 ```
 Notice above a use case where condition attribute value had to be aliased (prefixed) since there are two values for the same attribute in the UpdateExpression
+
 
 ##### Example: Try-Lock-Range (always incrementing) use case
 ```js
