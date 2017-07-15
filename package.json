@@ -1,9 +1,10 @@
 {
   "name": "dynamo-update-expression",
-  "version": "1.0.3",
+  "version": "1.0.2",
   "description": "Generate DynamoDB Update Expression by diff-ing original and updated documents",
   "main": "lib/index.js",
   "scripts": {
+    "commit": "git-cz",
     "test": "npm run eslint && jest --verbose",
     "prebuild": "rimraf lib",
     "build": "babel --copy-files --out-dir lib --ignore *.spec.js src",
@@ -19,9 +20,14 @@
     "babel-plugin-transform-object-rest-spread": "~6.23.0",
     "babel-plugin-transform-runtime": "~6.23.0",
     "babel-preset-env": "~1.2.2",
+    "commitizen": "^2.9.6",
+    "cz-conventional-changelog": "^2.0.0",
     "eslint": "~3.18.0",
     "jest": "~19.0.2",
     "rimraf": "^2.6.1"
+  },
+  "czConfig": {
+    "path": "node_modules/cz-conventional-changelog"
   },
   "repository": {
     "type": "git",
