@@ -203,7 +203,7 @@ I'd even go further and suggest that you nullify values - not delete keys - for 
 As a rule of thumb, for Lists, always nullify (set to `null` or `undefined`) or empty the strings (set to ""), the update expression would detect and precisely (generate expression to) remove those elements by index.
 DynamoDB eventually collapses your list on the server side after removing the selected indexes.
 For Maps (object keys), you are free to delete the key or to nullify/empty the values. The real decision is, would you prefer to delete a composite node (a parent Map node) e.g. `productReviews`, or you'd rather preserve even if it would end up an empty `Map {}` (or empty `Lists []` in the case above).
-Choose the earlier for free style document store and the latter for schema-like document structure where the processor expects some structure or prefers to follow a function iterator/enumeration style vs null/undefined checking in if/else blocks.
+Choose the earlier for free style document store and the latter for schema-like document structure where the processor expects some structure or prefers to follow a functional iterator/enumeration style vs null/undefined checking in if/else blocks.
 
 
 ## API
