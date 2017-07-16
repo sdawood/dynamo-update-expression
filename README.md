@@ -1,6 +1,6 @@
-master|develop
----|---
-[![Build Status](https://travis-ci.org/sdawood/dynamo-update-expression.svg?branch=master)](https://travis-ci.org/sdawood/dynamo-update-expression)|[![Build Status](https://travis-ci.org/sdawood/dynamo-update-expression.svg?branch=develop)](https://travis-ci.org/sdawood/dynamo-update-expression)
+master|develop|npm
+---|---|---
+[![Build Status](https://travis-ci.org/sdawood/dynamo-update-expression.svg?branch=master)](https://travis-ci.org/sdawood/dynamo-update-expression)|[![Build Status](https://travis-ci.org/sdawood/dynamo-update-expression.svg?branch=develop)](https://travis-ci.org/sdawood/dynamo-update-expression)|[![npm version](https://badge.fury.io/js/dynamo-update-expression.svg)](https://badge.fury.io/js/dynamo-update-expression)
 
 # dynamo-update-expression
 
