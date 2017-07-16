@@ -17,6 +17,7 @@
     "lodash": "^4.17.4"
   },
   "devDependencies": {
+    "@bubltechnology/customizable-commit-analyzer": "^1.0.2-0",
     "babel-cli": "~6.24.0",
     "babel-eslint": "^7.2.1",
     "babel-plugin-transform-object-rest-spread": "~6.23.0",
@@ -33,7 +34,20 @@
   "config": {
     "commitizen": {
       "path": "node_modules/cz-conventional-changelog"
+    },
+    "commitTypeMap": {
+      "feat": "minor",
+      "fix": "patch",
+      "docs": "patch",
+      "refactor": "patch",
+      "perf": "patch",
+      "style": null,
+      "test": null,
+      "chore": null
     }
+  },
+  "release": {
+    "analyzeCommits": "@bubltechnology/customizable-commit-analyzer"
   },
   "repository": {
     "type": "git",
