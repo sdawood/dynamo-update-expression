@@ -11,6 +11,7 @@ Allows for generating update expression with no-orphans (create new intermediate
 
 Optionally include a condition expression with your update to utilize [Optimistic Locking With Version Number](http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBMapper.OptimisticLocking.html)
 
+**Try it out `online`** [here](https://npm.runkit.com/dynamo-update-expression)
 
 ```js
 const due = require('dynamo-update-expression');
@@ -21,9 +22,13 @@ due.getVersionedUpdateExpression({original, modified, versionPath: '$.path.to.ve
 
 due.getVersionLockExpression({newVersion: expiryTimeStamp, condition: '<'});
 
-// Bonus!
+// Bonus! general purpose diff and patch projections
 
 const {ADD, DELETE, SET} = due.diff(original, modified /* orphans = false*/);
+// returns list(s) of {path, value} pairs
+
+const {ADD, DELETE, SET} = due.patches(original, modified, orphans = false);
+// returns a materialized object for each change-set, useful for logging/auditing
 ```
 
 See the options available below:
