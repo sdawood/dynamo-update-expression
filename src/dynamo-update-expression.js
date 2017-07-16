@@ -2,6 +2,7 @@ const jp = require('jsonpath');
 const _ = require('lodash');
 
 module.exports = {
+    patches,
     diff,
     getUpdateExpression,
     getVersionedUpdateExpression,
@@ -218,8 +219,8 @@ function alias(node, nameMap, valueMap, aliasContext = {}) {
 }
 
 
-function calcPatches(original, modified) {
-    const {ADD, DELETE, SET} = diff(original, modified);
+function patches(original, modified, orphans = false) {
+    const {ADD, DELETE, SET} = diff(original, modified, orphans);
     const addPatch = ADD.reduce((acc, field) => {
         jp.value(acc, field.path, field.value);
         return acc;
