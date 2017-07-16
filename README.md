@@ -657,10 +657,10 @@ You can always post-process this object before sending off to `aws-sdk` DynamoDB
 
 - UpdateExpression: string, currently only using `SET` (for add/update) and `REMOVE` (for deletes)
 - ExpressionAttributeNames: object of pairs `'#aliasedAttributeName': attributeName`
-- ExpressionAttributeValues: object of pairs `':aliasedAttributeNAme': attributeValue'`
+- ExpressionAttributeValues: object of pairs `':aliasedAttributeName': attributeValue'`
 
 And optionally:
-- ConditionExpression `'#aliasedAttributeName ${operator} :aliasedAttributeNAme`
+- ConditionExpression `'#aliasedAttributeName ${operator} :aliasedAttributeName`
 
 You can post process the generated object to apply more elaborate conditions for example:
 ```js
