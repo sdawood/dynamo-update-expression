@@ -691,7 +691,7 @@ For a comprehensive list of possible usages and parameter combinations see [test
 
 ## What about DynamoDB *Set* type?
 Currently DynamoDB Set type, is not a regular JS object, nor it is an ES2015 Set. It is an immutable class-intance that you can only create by invoking a factory method in the document client `createSet(someIterable)`.
-It uses the type of the first element in your iteratble as the Set Type {Numeric | String | [Buffer | ArrayBuffer ]}.
+It uses the type of the first element in your iterable as the Set Type {Numeric | String | [Buffer | ArrayBuffer ]}.
 Once that instance is created, you can't query it for values, and you can't manipulate it, its only purpose is to `serialize` itself properly into DynamoDB's Supported JSON format.
 
 In short, DynamoDB Set manipulation expressions are currently not supported, and future versions of this module would support Set type by rather detecting ES2015 Sets and continuing from there.
