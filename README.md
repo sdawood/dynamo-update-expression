@@ -650,6 +650,78 @@ const updateExpression = due.getVersionLockExpression({
 **/
 ```
 
+## Bonus:
+At the heart of it are a couple of cool utility functions that you can use everywhere.
+
+### diff(original, modified, orphans = false)
+Calculates canonical diff sets, namely {ADD, SET, DELETE}
+Each item is a pair of {path, value}, where path is a jsonpath
+
+*Both `original` and `modified` objects can be of arbitrary complexity, as long as objects are JSON compatible.*
+
+*Future versions will add support for ES2015+ Map/Set collection types*
+
+```js
+const diffs = due.diff({x: {y: {z: 2, w: 3}}}, {x: {y: {w: 4}}, v: 'new'});
+/** returns {ADD, SET, DELETE} canonical diff sets
+{
+  "ADD": [
+    {
+      "path": "$.v",
+      "value": "new"
+    }
+  ],
+  "DELETE": [
+    {
+      "path": "$.x.y.z",
+      "value": 2
+    }
+  ],
+  "SET": [
+    {
+      "path": "$.x.y.w",
+      "value": 4
+    }
+  ]
+}
+
+**/
+```
+
+### patches(original, modified, orphans = false)
+In case you need diffing, but are not keen on inspecting detailed paths and rather log/audit using materialized javascript objects, use `patches`
+It creates a partial for each diff group, which is a fully inflated object with all intermediate nodes (Map/List) created for you. Comes in handy for auditing changes since partial documents can be more readable than paths/value pairs.
+
+*Both `original` and `modified` objects can be of arbitrary complexity, as long as objects are JSON compatible.*
+
+*Future versions will add support for ES2015+ Map/Set collection types*
+
+```js
+due.patches({x: {y: {z: 2, w: 3}}}, {x: {y: {w: 4}}, v: 'new'})
+/**
+  {
+    "ADD": {
+      "v": "new"
+    },
+    "SET": {
+      "x": {
+        "y": {
+          "w": 4
+        }
+      }
+    },
+    "DELETE": {
+      "x": {
+        "y": {
+          "z": 2
+        }
+      }
+    }
+  }
+
+**/
+```
+
 ## Mix and Match
 This module is non invasive, it doesn't make decisions for you or pre-bake an update expression that you can't extend.
 Remember that the result is an object that is compatible with the DynamoDB Item-Client and Document-Client of the `aws-sdk` library.

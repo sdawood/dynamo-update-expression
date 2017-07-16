@@ -1,4 +1,5 @@
 const {
+    patches,
     diff,
     getUpdateExpression,
     getVersionedUpdateExpression,
@@ -6,6 +7,7 @@ const {
 } = require('./dynamo-update-expression');
 
 module.exports = {
+    patches,
     diff,
     getUpdateExpression,
     getVersionedUpdateExpression,
