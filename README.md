@@ -7,7 +7,7 @@ master|develop
 
 Generate DynamoDB Update Expression by diff-ing original and updated/modified documents.
 
-Allows for generating update expression with no-orphans (create new nodes as you go) or deep paths (ideal for *predefined* document structure), more on that in the examples below.
+Allows for generating update expression with no-orphans (create new intermediate nodes as you go) or deep paths (ideal for *predefined* document structure), more on that in the examples below.
 
 Optionally include a condition expression with your update to utilize [Optimistic Locking With Version Number](http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBMapper.OptimisticLocking.html)
 
@@ -193,7 +193,7 @@ Something that would not be ideal in the case of lists with a large number of it
 
 **Note: DynamoDB doesn't allow a value to be an empty string and would remove an attribute if you set the value to ""**
 
-The benefits of nullifying/emptying List items are double fold. Firstly, we are able to generate a precise update expression that only REMOVE the targeted items.
+The benefit of nullifying/emptying List items is double fold. Firstly, we are able to generate a precise update expression that only REMOVE the targeted items.
 Thus avoiding the sub-optimal solution of including a merged list of (all - removed) or worse risk overwriting the whole list in case of an unstable merge/diff of the lists.
 In addition, it is almost always a good idea to preserve the structure of the document, by keeping empty collections (List/Map) in this case contrary to deleting the empty collection, as some other solutions would do if the list is empty.
 Deleting the collection would force your code to do null-checking in future reads instead of the functional-style iteration over collections with the safety of no-op in case they turn out to be empty.
@@ -258,7 +258,7 @@ const updateExpression = due.getUpdateExpression({original: partial, modified});
 **/
 ```
 
-Notice how `SET #pictures = :pictures` was generated, where `:pictures` value including the whole new node as a new value. While this would successfully preserve your changes, you would be overwriting any existing Map at the path $.pictures.
+Notice how `SET #pictures = :pictures` was generated, where `:pictures` value includes the whole new node as a new value. While this would successfully preserve your changes, you would be overwriting any existing Map at the path $.pictures.
 Of course if your *original* document was freshly loaded from DynamoDB, then you have nothing to worry about, only the new nodes would be added.
 
 In case you know that you are starting with a *partial* document, you would need to make a choice, to allow orphans and preserve any possible Map/List at the path,
