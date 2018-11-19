@@ -1,6 +1,6 @@
 {
   "name": "dynamo-update-expression",
-  "version": "0.0.0-development",
+  "version": "1.0.8",
   "description": "Generate DynamoDB Update Expression by diff-ing original and updated documents",
   "main": "lib/index.js",
   "scripts": {
@@ -19,7 +19,7 @@
   "devDependencies": {
     "@bubltechnology/customizable-commit-analyzer": "^1.0.2-0",
     "babel-cli": "~6.24.0",
-    "babel-eslint": "^7.2.1",
+    "babel-eslint": "^7.2.3",
     "babel-plugin-transform-object-rest-spread": "~6.23.0",
     "babel-plugin-transform-runtime": "~6.23.0",
     "babel-preset-env": "~1.2.2",

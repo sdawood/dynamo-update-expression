@@ -4,6 +4,9 @@ master|develop|npm
 
 # dynamo-update-expression
 
+## Please take a moment to ...
+[Help keep dynamo-update-expression alive and support immutable collectios, latest DynamoDB DSL and ES-2019 development](https://www.patreon.com/shaady)
+
 
 Generate DynamoDB Update Expression by diff-ing original and updated/modified documents.
 
