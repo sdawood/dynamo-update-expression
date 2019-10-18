@@ -101,7 +101,8 @@ const regex = {
     isNumericSubscript$: /(.*)(\[[\d]+\])$/,
     invalidIdentifierName: /\["([\w\.\s-]+)"\]/g, // extract path parts that are surrounded by ["<invalid.name>"] by jsonpath.stringify
     isInvalidIdentifierName: /\["([\w\.\s-]+)"\]/,
-    safeDot: /\.(?![\w]+")/ // won't split an attribute name that includes a '.' within a path $.x["prefix.suffix"]
+    safeDot: /\.(?![\w]+")|\[\"([\w-]+)\"\]/ // will split a kebab case child $.x["prefix-suffix"]
+    // but won't split an attribute name that includes a '.' within a path $.x["prefix.suffix"]
 };
 
 const maxAttrNameLen = 255;
@@ -175,7 +176,8 @@ function alias(node, nameMap, valueMap, aliasContext = {}) {
     const {prefix = ''} = aliasContext;
     const parts = node.path
         .slice(1) // skip `$` part of the path
-        .split(regex.safeDot); // first element is '', except for subscripted paths: $["prefix.suffix"] or $[0]
+        .split(regex.safeDot) // first element is '', except for subscripted paths: $["prefix.suffix"] or $[0]
+        .filter(part => part !== undefined);
 
     const pathParts = parts
         .filter(part => part !== '')
