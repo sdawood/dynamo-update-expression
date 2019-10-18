@@ -185,7 +185,8 @@ describe('dynamodb-update-expression', () => {
                 pictures: {
                     frontView: 'http://example.com/products/123_front.jpg',
                     rearView: 'http://example.com/products/123_rear.jpg',
-                    sideView: 'http://example.com/products/123_right_side.jpg' // UPDATED Map item
+                    sideView: 'http://example.com/products/123_right_side.jpg', // UPDATED Map item
+                    'left-view': 'http://example.com/products/123_left_side.jpg' // UPDATED Map item with dash
                 },
                 productReview: {
                     fiveStar: [
@@ -200,15 +201,15 @@ describe('dynamodb-update-expression', () => {
                 comment: 'This product sells out quickly during the summer',
                 'Safety.Warning': 'Always wear a helmet, ride at your own risk!' // UPDATED attribute name with `.`
             };
-
             const updateExpression = due.getUpdateExpression({original, modified});
             expect(updateExpression).toEqual({
-                "UpdateExpression": "SET #color[2] = :color2, #productReview.#fiveStar[2] = :productReviewFiveStar2, #inStok = :inStok, #pictures.#sideView = :picturesSideView, #price = :price, #productReview.#oneStar[0] = :productReviewOneStar0, #relatedItems[0] = :relatedItems0, #safetyWarning = :safetyWarning REMOVE #color[1], #productReview.#fiveStar[0], #relatedItems[1], #title",
+                "UpdateExpression": "SET #color[2] = :color2, #pictures.#leftView = :picturesLeftView, #productReview.#fiveStar[2] = :productReviewFiveStar2, #inStok = :inStok, #pictures.#sideView = :picturesSideView, #price = :price, #productReview.#oneStar[0] = :productReviewOneStar0, #relatedItems[0] = :relatedItems0, #safetyWarning = :safetyWarning REMOVE #color[1], #productReview.#fiveStar[0], #relatedItems[1], #title",
 
                 "ExpressionAttributeNames": {
                     "#color": "color",
                     "#fiveStar": "fiveStar",
                     "#inStok": "inStok",
+                    "#leftView": "left-view",
                     "#oneStar": "oneStar",
                     "#pictures": "pictures",
                     "#price": "price",
@@ -221,6 +222,7 @@ describe('dynamodb-update-expression', () => {
                 "ExpressionAttributeValues": {
                     ":color2": "Blue",
                     ":inStok": false,
+                    ":picturesLeftView": "http://example.com/products/123_left_side.jpg",
                     ":picturesSideView": "http://example.com/products/123_right_side.jpg",
                     ":price": 600,
                     ":productReviewFiveStar2": "This is new",
