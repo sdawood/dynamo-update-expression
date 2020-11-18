@@ -29,7 +29,7 @@
     "jest": "~19.0.2",
     "jest-cli": "^19.0.2",
     "rimraf": "^2.6.1",
-    "semantic-release": "^6.3.6"
+    "semantic-release": "^17.2.3"
   },
   "config": {
     "commitizen": {
